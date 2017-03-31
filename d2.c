@@ -275,34 +275,42 @@ void draw_game() {
             }
             sprite_step(diamond[i]);
 	}
+            //int missle_x = round(sprite_x(missle));
+            int missle_y = round(sprite_y(missle));
+
+            double mdx = sprite_dx(missle);
+            double mdy = sprite_dy(missle);
 
         if (missle_fired == true)
         {
             
             sprite_draw(missle);
 
-            int missle_x = round(sprite_x(missle));
-            int missle_y = round(sprite_y(missle));
 
-            double mdx = sprite_dx(missle);
-            double mdy = sprite_dy(missle);
-            if (missle_x <= 1)
-            {
-                mdx = fabs(mdx);
-            }
-            else if (missle_x >= w - 1)
-            {
-                mdx = -fabs(mdx);
-            }
-            if (missle_y <= 2)
-            {
-                mdy = fabs(mdy);
-            }
-            else if (missle_y >= h - 1)
-            {
-                mdy = -fabs(mdy);
+            // if (missle_x <= 1)
+            // {
+            //     mdx = fabs(mdx);
+            // }
+            // else if (missle_x >= w - 1)
+            // {
+            //     mdx = -fabs(mdx);
+            // }
+            // if (missle_y <= 2)
+            // {
+            //     mdy = fabs(mdy);
+            // }
+            // else if (missle_y >= h - 1)
+            // {
+            //     mdy = -fabs(mdy);
+            // }
+            if( missle_y > 0){
+                
+                sprite_move(missle, mdx + 0, mdy - 1);
             }
            sprite_step(missle);
+        }else if(missle_y == 0){
+            missle_fired = false;
+            return;
         }
 
         draw_border();
@@ -315,14 +323,6 @@ void setup_missle(void){
     double missle_x = sprite_x(space_craft);
     double missle_y = sprite_y(space_craft);
     missle = sprite_create(missle_x +2 , missle_y - 1 , 1,1, missle_image);
-}
-
-void fire_missle(key){
-    purge_buff();
-    setup_missle();
-
-
-
 }
 
 
