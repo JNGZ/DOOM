@@ -29,6 +29,7 @@ void game_over_prompt(void);
 void draw_spacecraft(void);
 void draw_diamond();
 void setup_missle(void);
+void test(void);
 
 sprite_id space_craft;
 sprite_id diamond[max_diamond];
