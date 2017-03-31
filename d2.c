@@ -283,33 +283,15 @@ void draw_game() {
 
         if (missle_fired == true)
         {
-            
             sprite_draw(missle);
-
-
-            // if (missle_x <= 1)
-            // {
-            //     mdx = fabs(mdx);
-            // }
-            // else if (missle_x >= w - 1)
-            // {
-            //     mdx = -fabs(mdx);
-            // }
-            // if (missle_y <= 2)
-            // {
-            //     mdy = fabs(mdy);
-            // }
-            // else if (missle_y >= h - 1)
-            // {
-            //     mdy = -fabs(mdy);
-            // }
             if( missle_y > 0){
-                
-                sprite_move(missle, mdx + 0, mdy - 1);
+                sprite_move(missle, mdx + 0, mdy - .5);
             }
            sprite_step(missle);
-        }else if(missle_y == 0){
+        }
+        if(missle_y == 0){
             missle_fired = false;
+            setup_missle();
             return;
         }
 
