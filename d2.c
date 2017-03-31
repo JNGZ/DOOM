@@ -29,7 +29,6 @@ void game_over_prompt(void);
 void draw_spacecraft(void);
 void draw_diamond();
 void setup_missle(void);
-void test(void);
 
 sprite_id space_craft;
 sprite_id diamond[max_diamond];
@@ -277,23 +276,34 @@ void draw_game() {
             sprite_step(diamond[i]);
 	}
 
-       if(missle_fired == true){
-           setup_missle();
-           sprite_draw(missle);
-           int missle_y = sprite_y(missle);
-        //    double missle_dy = sprite_dy(missle);
-        //    double missle_dx = sprite_dx(missle);
-           while(missle_fired == true){
-            sprite_move(missle, 0, - 1);
+        if (missle_fired == true)
+        {
             
-           }
-           if(missle_y <= 0){
-               missle_fired = false;
-           }
+            sprite_draw(missle);
+
+            int missle_x = round(sprite_x(missle));
+            int missle_y = round(sprite_y(missle));
+
+            double mdx = sprite_dx(missle);
+            double mdy = sprite_dy(missle);
+            if (missle_x <= 1)
+            {
+                mdx = fabs(mdx);
+            }
+            else if (missle_x >= w - 1)
+            {
+                mdx = -fabs(mdx);
+            }
+            if (missle_y <= 2)
+            {
+                mdy = fabs(mdy);
+            }
+            else if (missle_y >= h - 1)
+            {
+                mdy = -fabs(mdy);
+            }
            sprite_step(missle);
-       }
-
-
+        }
 
         draw_border();
 
