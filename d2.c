@@ -289,13 +289,14 @@ void draw_game() {
             double mdx = sprite_dx(missle);
             double mdy = sprite_dy(missle);
 
-        if (missle_fired == true)
+         if(missle_fired == true)
         {
             sprite_draw(missle);
             if( missle_y > 0){
                 sprite_move(missle, mdx + 0, mdy - .3);
+                sprite_step(missle);
             }
-           sprite_step(missle);
+           
         }
         if(missle_y == 0){
             setup_missle();
