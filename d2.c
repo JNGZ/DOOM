@@ -24,6 +24,7 @@ int score = 0;
 bool missle_fired = false;
 int lives = 3;
 
+
 // GLOBAL VARIABLES
 void process(void);
 void help_view(void);
@@ -448,7 +449,7 @@ void process()
     if (collision_detect(space_craft, diamond, max_diamond))
     {
 
-        if (lives >= 1)
+        if (lives > 1)
         {
             lives -= 1;
             clear_screen();
@@ -456,7 +457,8 @@ void process()
             clear_screen();
             setup();
         }
-        else if(lives == 0){
+        else if(lives == 1){
+            lives -= 1;
             clear_screen();
             game_over_prompt();
         }
