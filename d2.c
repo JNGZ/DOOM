@@ -120,9 +120,7 @@ void collision_prompt(void){
 
     sprite_draw(collision_prompt);
     show_screen();
-
     wait_char();
-    setup();
 }
 
 void draw_spacecraft(void)
@@ -185,8 +183,8 @@ void help_view(void)
              /**/ "#              n9821112                #"
              /**/ "########################################"
              /**/ "#              Controls                #"
-             /**/ "#      q         : quit                #"
-             /**/ "#      h         : help                #"
+             /**/ "#              q : quit                #"
+             /**/ "#              h : help                #"
              /**/ "#      Arrow keys: move left/right     #"
              /**/ "#     Space, z, x, c : shoot bullet    #"
              /**/ "########################################"
@@ -249,6 +247,8 @@ void game_over_prompt()
     {
         purge_buff();
         clear_screen();
+        lives = 3;
+        setup();
         return;
     }
     if (key == 'n')
@@ -445,10 +445,21 @@ void process()
         return;
     }
 
-    if (collision_detect(space_craft, diamond, max_diamond)){
-        clear_screen();
-        collision_prompt();
-        lives -= 1;
+    if (collision_detect(space_craft, diamond, max_diamond))
+    {
+
+        if (lives >= 1)
+        {
+            lives -= 1;
+            clear_screen();
+            collision_prompt();
+            clear_screen();
+            setup();
+        }
+        else if(lives == 0){
+            clear_screen();
+            game_over_prompt();
+        }
         return;
     }
 
