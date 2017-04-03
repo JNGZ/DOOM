@@ -27,6 +27,7 @@ int lives = 3;
 // GLOBAL VARIABLES
 void process(void);
 void help_view(void);
+void collision_prompt(void);
 void do_game_over(void);
 void draw_border(void);
 void draw_game(void);
@@ -92,6 +93,38 @@ void purge_buff(void)
     }
 }
 
+void collision_prompt(void){
+    char *collision_prompt_image = 
+             /**/ "########################################"
+             /**/ "                                        "
+             /**/ "             YOUR SPACE CRAFT           "
+             /**/ "     HAS BEEN DESTROYED BY A DIAMOND    "
+             /**/ "                                        "
+             /**/ "        PRESS ANY KEY TO CONTINUE       "
+             /**/ "                                        "
+             /**/ "########################################";
+    
+    // SETS COLLISION PROMPT LOCATION
+    int cp_x = screen_width() / 2;
+    int cp_y = screen_height() / 2;
+
+    // SETS SPRITE DIMENSIONS
+    int cp_width = 40;
+    int cp_height = 8;
+
+    // DECLARE SPRITE
+    sprite_id collision_prompt;
+
+    // INITIALISE GAME_OVER SPIRTE AND PLACE IN POSITION (CENTER OF SCREEN)
+    collision_prompt = sprite_create(cp_x - (cp_width / 2), cp_y - (cp_height / 2), cp_width, cp_height, collision_prompt_image);
+
+    sprite_draw(collision_prompt);
+    show_screen();
+
+    wait_char();
+    setup();
+}
+
 void draw_spacecraft(void)
 {
 
@@ -145,7 +178,7 @@ void help_view(void)
 
     // SPRITE IMAGE
     char *help_image =
-        /**/ "########################################"
+             /**/ "########################################"
              /**/ "#         CAB202 Assignment 1          #"
              /**/ "#        The Diamonds of Doom          #"
              /**/ "#          Jonathan Gonzalez           #"
@@ -185,7 +218,7 @@ void help_view(void)
 void game_over_prompt()
 {
     char *game_over_msg =
-        /**/ "########################################"
+            /**/ "########################################"
              /**/ "                                        "
              /**/ "              - GAME OVER -             "
              /**/ "      Would you like to play again?     "
@@ -413,7 +446,8 @@ void process()
     }
 
     if (collision_detect(space_craft, diamond, max_diamond)){
-        game_over = true;
+        clear_screen();
+        collision_prompt();
         lives -= 1;
         return;
     }
