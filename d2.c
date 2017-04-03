@@ -9,6 +9,8 @@
 // CONFIGURATIONS
 #define lives 10
 #define DELAY (10000)
+#define sc_width 5
+#define sc_height 3
 #define diamond_width 5
 #define diamond_height 5
 #define max_diamond 5
@@ -48,6 +50,7 @@ void setup(void) {
     setup_missle();
 }
 
+
 // PURGE KEYBOARD BUFFER
 void purge_buff(void){
     while ( get_char() >= 0 ) {}
@@ -70,8 +73,7 @@ void draw_spacecraft(void){
     show_screen();
 }
 
-void draw_diamond()
-{
+void draw_diamond(){
     char *diamond_image =
         /**/ "  A  "
              /**/ " <|> "
@@ -81,12 +83,7 @@ void draw_diamond()
 
     int w = screen_width();
     int h = screen_height();
-
-    // should only be called once
-    //int r = rand();
     int xRange = (w - diamond_width) - 2;
-    //int yRange = (h - diamond_height) - 2;
-    //int diamond_x = r % xRange;
     int diamond_y = h * .2;
 
     for (int i = 0; i < max_diamond; i++)
@@ -98,8 +95,7 @@ void draw_diamond()
     }
 }
 
-void help_view(void)
-{
+void help_view(void){
     
     // SPRITE IMAGE
     char *help_image =
@@ -308,9 +304,6 @@ void draw_game() {
 
 }
 
-
-
-
 void update_space_craft(int key){
 
     // SPACE CRAFT Current screen coordinates
@@ -353,8 +346,7 @@ void process(){
     int key = get_char();
     
     update_space_craft(key);
-        
-
+    
 
     if ( key == 'q' || lives == 0) {
         purge_buff();
