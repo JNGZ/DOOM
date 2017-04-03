@@ -321,14 +321,13 @@ void draw_game()
 
     int w = screen_width();
     int h = screen_height();
-
+    draw_border();
     sprite_draw(space_craft);
 
     // Draw multiple diamonds
     for (int i = 0; i < max_diamond; i++)
     {
-        sprite_draw(diamond[i]);
-
+    sprite_draw(diamond[i]);
         // MOVING THE DIAMONDS AND BOUNCING
         int diamond_x = round(sprite_x(diamond[i]));
         int diamond_y = round(sprite_y(diamond[i]));
@@ -359,8 +358,17 @@ void draw_game()
             sprite_turn_to(diamond[i], ddx, ddy);
         }
         sprite_step(diamond[i]);
+        // DIAMOND COLLISION WITH MISSLE
+        if (collision_detect(missle, diamond, max_diamond))
+        {
+            //sprite_hide(missle);
+            score += 1;
+            clear_screen();
+            setup();
+            return;
+        }
     }
-    //int missle_x = round(sprite_x(missle));
+
     int missle_y = round(sprite_y(missle));
 
     double mdx = sprite_dx(missle);
@@ -382,7 +390,6 @@ void draw_game()
         return;
     }
 
-    draw_border();
 }
 
 void update_space_craft(int key)
@@ -448,7 +455,6 @@ void process()
 
     if (collision_detect(space_craft, diamond, max_diamond))
     {
-
         if (lives > 1)
         {
             lives -= 1;
@@ -462,8 +468,11 @@ void process()
             clear_screen();
             game_over_prompt();
         }
+        sprite_destroy(missle);
         return;
     }
+
+
 
     show_screen();
 }
