@@ -56,7 +56,7 @@ void setup(void)
 
 // COLLISION DETECTION METHOD
 sprite_id collision_detect(sprite_id sprite, sprite_id sprites[],int num_sprites){
-
+    
     for(int i = 0; i < num_sprites; i++){
         sprite_id current_sprite = sprites[i];
 
@@ -250,6 +250,7 @@ void game_over_prompt()
         purge_buff();
         clear_screen();
         lives = 3;
+        score = 0;
         setup();
         return;
     }
@@ -260,14 +261,6 @@ void game_over_prompt()
         game_over = true;
         return;
     }
-    if (key != 'y' && key != 'n')
-    {
-        purge_buff();
-        clear_screen();
-        return;
-    }
-
-    wait_char();
 }
 
 void draw_border()
@@ -358,17 +351,6 @@ void draw_game()
                 sprite_turn_to(diamond[i], ddx, ddy);
             }
             sprite_step(diamond[i]);
-        
-        // DIAMOND COLLISION WITH MISSLE
-        if (collision_detect(missle, diamond, max_diamond))
-        {
-            //sprite_hide(missle);
-            score += 1;
-            clear_screen();
-            help_view();
-            setup_diamond();
-            return;
-        }
     }
 
 
@@ -476,6 +458,12 @@ void process()
             game_over_prompt();
         }
         return;
+    }
+
+      if (collision_detect(missle, diamond, max_diamond) && sprite_visible(missle))
+    {
+        sprite_hide(missle);
+        score += 1;
     }
 
     show_screen();
