@@ -14,6 +14,7 @@
 #define diamond_width 5
 #define diamond_height 5
 #define max_diamond 5
+#define max_missles 100
 #define missle_width 1
 #define missle_height 1
 
@@ -143,9 +144,21 @@ void draw_spacecraft(void)
     show_screen();
 }
 
+void setup_missle(void)
+{
+    char *missle_image =
+        /**/ "O";
+
+    double missle_x = sprite_x(space_craft);
+    double missle_y = sprite_y(space_craft);
+    missle = sprite_create(missle_x + 2, missle_y - 1, 1, 1, missle_image);
+
+}
+
 void setup_diamond(void)
 {
-
+    int now = get_current_time();
+    srand(now);
     for (int i = 0; i < max_diamond; i++)
     {
         diamond[i] = setup_a_diamond();
@@ -163,7 +176,7 @@ sprite_id setup_a_diamond(void)
 
     int w = screen_width();
     int h = screen_height();
-    
+
     int xRange = (w - diamond_width) - 2;
     int diamond_y = h * .2;
     sprite_id diamond = sprite_create(rand() % xRange, diamond_y, diamond_width, diamond_height, diamond_image);
@@ -408,16 +421,7 @@ void update_space_craft(int key)
     }
 }
 
-void setup_missle(void)
-{
-    char *missle_image =
-        /**/ "O";
 
-    double missle_x = sprite_x(space_craft);
-    double missle_y = sprite_y(space_craft);
-    missle = sprite_create(missle_x + 2, missle_y - 1, 1, 1, missle_image);
-
-}
 
 void process()
 {
