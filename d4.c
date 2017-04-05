@@ -37,12 +37,10 @@ void draw_game(void);
 void game_over_prompt(void);
 void draw_spacecraft(void);
 void setup_diamond(void);
-void setup_missle();
 sprite_id setup_a_diamond(void);
 void setup_a_missle(void);
 sprite_id collision_detect(sprite_id sprite, sprite_id sprites[], int num_sprites);
 bool collided(sprite_id sprite1, sprite_id sprite2);
-void shoot();
 
 sprite_id space_craft;
 sprite_id diamond[max_diamond];
@@ -60,8 +58,21 @@ void setup(void)
     
 }
 
+// COLLISION DETECTION METHOD
+sprite_id collision_detect(sprite_id sprite, sprite_id sprites[],int num_sprites){
+    
+    for(int i = 0; i < num_sprites; i++){
+        sprite_id current_sprite = sprites[i];
+
+        if(sprite != current_sprite && collided(sprite, current_sprite)){
+            return current_sprite;
+        }
+    }
+    return NULL;
+}
+
 // BOOLEAN COLLISION OF SPRITES
-bool collision(sprite_id sprite1, sprite_id sprite2) {
+bool collided(sprite_id sprite1, sprite_id sprite2) {
     int sprite1_top = round(sprite_y(sprite1)),
         sprite1_bottom = sprite1_top + sprite_height(sprite1) - 1,
         sprite1_left = round(sprite_x(sprite1)),
@@ -72,16 +83,12 @@ bool collision(sprite_id sprite1, sprite_id sprite2) {
         sprite2_left = round(sprite_x(sprite2)),
         sprite2_right = sprite2_left + sprite_width(sprite2) - 1;
 
-    bool collided = true;
-
     return !(
         sprite1_bottom < sprite2_top
         || sprite1_top > sprite2_bottom
         || sprite1_right < sprite2_left
         || sprite1_left > sprite2_right
         );
-    
-    return collided;
 }
 
 // PURGE KEYBOARD BUFFER
@@ -149,40 +156,28 @@ void setup_a_missle(void)
     double missle_y = sprite_y(space_craft);
     missle = sprite_create(missle_x + 2, missle_y - 1, 1, 1, missle_image);
 
-
 }
 
-
-
-void setup_diamond(void)
+void setup_diamonds(void)
 {
-    int now = get_current_time();
-    srand(now);
-    for (int i = 0; i < max_diamond; i++)
-    {
-        diamond[i] = setup_a_diamond();
-    }
-}
-
-sprite_id setup_a_diamond(void)
-{
-    char *diamond_image =
+        char *diamond_image =
              /**/ "  A  "
              /**/ " <|> "
              /**/ "<|*|>"
              /**/ " <|> "
              /**/ "  V  ";
-
     int w = screen_width();
     int h = screen_height();
 
     int xRange = (w - diamond_width) - 2;
     int diamond_y = h * .2;
-    sprite_id diamond = sprite_create(rand() % xRange, diamond_y, diamond_width, diamond_height, diamond_image);
-    sprite_turn_to(diamond, 0.05, 0);
-    sprite_turn(diamond, rand() % 360);
 
-    return diamond;
+    for ( int i = 0; i < max_diamond; i++) {
+		diamond[i] = sprite_create(rand() % xRange, diamond_y, diamond_width, diamond_height, diamond_image);
+		sprite_turn_to(diamond[i], 0.05, 0);
+		sprite_turn(diamond[i], rand() % 360);
+		sprite_draw( diamond[i] );
+	}
 }
 
 void help_view(void)
@@ -335,82 +330,90 @@ void draw_border()
     return;
 }
 
-void draw_game()
-{
-    int w = screen_width();
-    int h = screen_height();
-
-    sprite_draw(space_craft);
-
-    // Draw multiple diamonds
-    for (int i = 0; i < max_diamond; i++)
-    {   
-        if(diamond[i]-> is_visible){
-            sprite_draw(diamond[i]);
-            	if ( collision(missle, diamond[i]) && sprite_visible(missle)){
-                sprite_hide(missle);
-				sprite_hide( diamond [i] );	
-                
-                score += 1;	
+void process_diamonds() {
+	for ( int i = 0; i < max_diamond; i++ ) {
+		if ( diamond[i]->is_visible ){
+			sprite_step( diamond[i]);
+		
+			if ( collision_detect( space_craft, diamond[i], max_diamond) ) {
+				sprite_hide( diamond[i] );			
 			}
-                if ( collision(space_craft, diamond[i])){
-                    if (lives > 1)
-                    {
-                        lives -= 1;
-                        clear_screen();
-                        collision_prompt();
-                        clear_screen();
-                        setup();
-                    }
-                    else if(lives == 1){
-                        lives -= 1;
-                        clear_screen();
-                        game_over_prompt();
-                    }
-                    return;
-                }
-        }
-        
-        // MOVING THE DIAMONDS AND BOUNCING
-        int diamond_x = round(sprite_x(diamond[i]));
-        int diamond_y = round(sprite_y(diamond[i]));
-
-        double ddx = sprite_dx(diamond[i]);
-        double ddy = sprite_dy(diamond[i]);
-
-        if (diamond_x <= 1)
-        {
-            ddx = fabs(ddx);
-        }
-        else if (diamond_x >= w - diamond_width)
-        {
-            ddx = -fabs(ddx);
-        } 
-        if (diamond_y <= 2)
-        {
-            ddy = fabs(ddy);
-        }
-        else if (diamond_y >= h - diamond_height)
-        {
-            ddy = -fabs(ddy);
-        }
-        //BOUNCE BACK
-        if (ddx != sprite_dx(diamond[i]) || ddy != sprite_dy(diamond[i]))
-        {
-            sprite_back(diamond[i]);
-            sprite_turn_to(diamond[i], ddx, ddy);
-        }
-
-        sprite_step(diamond[i]);
-
-    }
-
-    shoot();
-
-    draw_border();
+		}
+	}
 }
 
-void shoot(){
+void draw_game()
+{
+    clear_screen();
+
+    sprite_draw(space_craft);
+    for (int i = 0; i < max_diamond; i++){
+       sprite_draw(diamond[i]);
+    }
+    // Draw multiple diamonds
+    // for (int i = 0; i < max_diamond; i++)
+    // {
+    //     sprite_draw(diamond[i]);
+
+    //     // MOVING THE DIAMONDS AND BOUNCING
+    //     int diamond_x = round(sprite_x(diamond[i]));
+    //     int diamond_y = round(sprite_y(diamond[i]));
+
+    //     double ddx = sprite_dx(diamond[i]);
+    //     double ddy = sprite_dy(diamond[i]);
+
+    //     if (diamond_x <= 1)
+    //     {
+    //         ddx = fabs(ddx);
+    //     }
+    //     else if (diamond_x >= w - diamond_width)
+    //     {
+    //         ddx = -fabs(ddx);
+    //     } 
+    //     if (diamond_y <= 2)
+    //     {
+    //         ddy = fabs(ddy);
+    //     }
+    //     else if (diamond_y >= h - diamond_height)
+    //     {
+    //         ddy = -fabs(ddy);
+    //     }
+    //     //BOUNCE BACK
+    //     if (ddx != sprite_dx(diamond[i]) || ddy != sprite_dy(diamond[i]))
+    //     {
+    //         sprite_back(diamond[i]);
+    //         sprite_turn_to(diamond[i], ddx, ddy);
+    //     }
+
+    //     sprite_step(diamond[i]);
+
+
+    //     // COLLISIONS
+
+    //     if (collision_detect(missle, diamond, max_diamond))
+    //     {
+    //         sprite_hide(diamond[i]);
+    //     }
+
+    //     if (collision_detect(space_craft, diamond, max_diamond) && sprite_visible(diamond[i]))
+    //     {
+    //         if (lives > 1)
+    //         {
+    //             lives -= 1;
+    //             clear_screen();
+    //             collision_prompt();
+    //             clear_screen();
+    //             setup();
+    //         }
+    //         else if (lives == 1)
+    //         {
+    //             lives -= 1;
+    //             clear_screen();
+    //             game_over_prompt();
+    //         }
+    //         return;
+    //     }
+    // }
 
     int missle_y = round(sprite_y(missle));
 
@@ -419,20 +422,22 @@ void shoot(){
 
     if (missle_fired == true)
     {
+
         if (missle_y > 0)
         {
-
-                sprite_draw(missle);
-                sprite_move(missle, mdx + 0, mdy - .3);
-                sprite_step(missle);
-
-            
+            sprite_draw(missle);
+            sprite_move(missle, mdx + 0, mdy - .3);
+            sprite_step(missle);
         }
     }
     if (missle_y == 0)
     {
         missle_fired = false;
+        setup_a_missle();
+        
     }
+
+    draw_border();
 }
 
 void update_space_craft(int key)
@@ -487,6 +492,32 @@ void process()
         clear_screen();
         help_view();
         return;
+    }
+    
+    // Test to see if there has been a collsion between space craft and diamond to show collision prompt screen
+    // or game over screen
+    // if (collision_detect(space_craft, diamond, max_diamond) && sprite_visible(diamond[i]))
+    // {
+    //     if (lives > 1)
+    //     {
+    //         lives -= 1;
+    //         clear_screen();
+    //         collision_prompt();
+    //         clear_screen();
+    //         setup();
+    //     }
+    //     else if(lives == 1){
+    //         lives -= 1;
+    //         clear_screen();
+    //         game_over_prompt();
+    //     }
+    //     return;
+    // }
+    // Test collision between Missle and Diamond
+      if (collision_detect(missle, diamond, max_diamond) && sprite_visible(missle))
+    {
+        sprite_hide(missle);
+        score += 1;
     }
 
     show_screen();
