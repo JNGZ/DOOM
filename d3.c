@@ -37,7 +37,7 @@ void game_over_prompt(void);
 void draw_spacecraft(void);
 void setup_diamond(void);
 sprite_id setup_a_diamond(void);
-void setup_missle(void);
+void setup_a_missle(void);
 sprite_id collision_detect(sprite_id sprite, sprite_id sprites[], int num_sprites);
 bool collided(sprite_id sprite1, sprite_id sprite2);
 
@@ -51,7 +51,7 @@ void setup(void)
     help_view();
     draw_spacecraft();
     setup_diamond();
-    setup_missle();
+    setup_a_missle();
     
 }
 
@@ -144,7 +144,7 @@ void draw_spacecraft(void)
     show_screen();
 }
 
-void setup_missle(void)
+void setup_a_missle(void)
 {
     char *missle_image =
         /**/ "O";
@@ -385,7 +385,7 @@ void draw_game()
     if (missle_y == 0)
     {
         missle_fired = false;
-        setup_missle();
+        setup_a_missle();
         
     }
 
@@ -416,7 +416,7 @@ void update_space_craft(int key)
     {
         purge_buff();
         missle_fired = true;
-        setup_missle();
+        setup_a_missle();
         return;
     }
 }
